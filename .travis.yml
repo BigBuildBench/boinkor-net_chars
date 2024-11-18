@@ -1,0 +1,66 @@
+language: rust
+cache: cargo
+
+rust:
+  - 1.26.0  # oldest supported version
+  - stable
+  - beta
+  - nightly
+
+os:
+  - linux
+
+env:
+  global:
+    - RUN_TEST=true
+    - RUN_CLIPPY=false
+    - RUSTFMT_VERSION=0.3.6
+
+matrix:
+  fast_finish: true # Don't wait for the optional builds
+  include:
+    - rust: stable
+      env:
+        - RUN_RUSTFMT=true
+        - RUN_TEST=false
+    - rust: nightly
+      env:
+        - RUN_CLIPPY=true
+        - RUN_TEST=false
+  allow_failures: []
+
+before_script:
+  - bash -c 'if [[ "$RUN_RUSTFMT" == "true" ]]; then
+      rustup component add rustfmt-preview
+      ;
+    fi'
+  - bash -c 'if [[ "$RUN_CLIPPY" == "true" ]]; then
+      rm -f ~/.cargo/bin/clippy;
+      rustup component add clippy-preview
+      ;
+    fi'
+
+
+script:
+  - bash -c 'if [[ "$RUN_TEST" == "true" ]]; then
+      cargo test
+      ;
+    fi'
+  - bash -c 'if [[ "$RUN_RUSTFMT" == "true" ]]; then
+      cargo fmt -v -- --check
+      ;
+    fi'
+  - bash -c 'if [[ "$RUN_CLIPPY" == "true" ]]; then
+      cargo clippy -- -D warnings
+      ;
+    fi'
+
+branches:
+  only:
+    # release tags
+    - /^v\d+\.\d+\.\d+.*$/
+    - master
+
+notifications:
+  email:
+    on_success: never

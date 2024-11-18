@@ -1,0 +1,36 @@
+[package]
+name = "chars"
+version = "0.7.0"
+authors = ["Andreas Fuchs <asf@boinkor.net>"]
+description = "A commandline tool to display information about unicode characters"
+license = "MIT"
+repository = "https://github.com/antifuchs/chars"
+readme = '../README.md'
+keywords = ['unicode', 'cli']
+categories = ['command-line-utilities', 'localization']
+edition = "2018"
+
+build = "build.rs"
+
+[lib]
+name = "chars"
+path = "src/lib.rs"
+
+[[bin]]
+name = "chars"
+path = "src/main.rs"
+
+[dependencies]
+
+[dev-dependencies]
+proptest = "1.5.0"
+
+[build-dependencies]
+chars_data = {path = "../chars_data", version = "^0.7.0" }
+
+[features]
+default = []
+
+[badges]
+circle-ci = { repository = "antifuchs/chars", branch = "master" }
+maintenance = { status = "passively-maintained" }
